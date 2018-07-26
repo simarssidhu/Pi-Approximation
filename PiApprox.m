@@ -1,4 +1,4 @@
-%% Numerical Approximation for Pi
+% Numerical Approximation for Pi
 
 x = 1.01;   % Initial base of exponential
 Max_Iter = 1000;  % Number of iterations
