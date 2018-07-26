@@ -14,7 +14,7 @@ where
 - ![x_i](http://mathurl.com/qym38jh.png) is the current iteration's estimate
 - ![x_i-1](http://mathurl.com/y7tx4362.png) is the previous iteration's estimate
 
-Reiterating this equation Max_Iter times will give an approximation of ![pi/2](http://mathurl.com/2e4usyb.png). Simply multiply this number by 2 to get the approximate of ![pi](http://mathurl.com/6cu2u8.png).
+Reiterating this equation `Max_Iter` times will give an approximation of ![pi/2](http://mathurl.com/2e4usyb.png). Simply multiply this number by 2 to get the approximate of ![pi](http://mathurl.com/6cu2u8.png).
 
 ## Things to note
 
