@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is program for a quick numerical approximation of ![pi](http://mathurl.com/6cu2u8.png).
+This is a Matlab program for a quick numerical approximation of ![pi](http://mathurl.com/6cu2u8.png).
 
 ## How it works
 
