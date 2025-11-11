@@ -18,18 +18,6 @@ from pathlib import Path
 
 from mpmath import mp
 
-try:  # ``set_backend`` is only present in newer mpmath releases.
-    from mpmath.libmp import set_backend
-except ImportError:  # pragma: no cover - gracefully handle older versions
-    set_backend = None
-else:  # pragma: no cover - exercise when the helper exists
-    try:  # pragma: no cover - ``gmpy2`` accelerates multiprecision arithmetic
-        import gmpy2  # type: ignore
-    except ImportError:
-        pass
-    else:
-        set_backend("gmpy")
-
 
 @dataclass(frozen=True)
 class PiApproxConfig:
@@ -39,25 +27,26 @@ class PiApproxConfig:
     exponent: int = 2
     iterations: int = 1000
     precision_digits: int = 1_000_000
-    guard_digits: int = 50
     output_path: Path = Path("pi.txt")
 
 
 def approximate_pi(config: PiApproxConfig) -> None:
     """Run the iterative approximation and persist the high-precision result."""
 
-    # ``PiApprox.m`` relies on MATLAB's variable-precision arithmetic to carry
-    # millions of digits when ``digits(Precision)`` is invoked.  We mirror that
-    # behaviour by running the entire iterative phase with the full requested
-    # precision so the accumulated value retains all available digits.
-    mp.dps = config.precision_digits + config.guard_digits
+    # ``PiApprox.m`` performs the loop using double-precision arithmetic and
+    # switches to ``digits(Precision)`` only after the iterations. To reproduce
+    # that flow we run the loop with a moderate working precision and then
+    # re-evaluate the final value at the requested digit count.
+    mp.mp.dps = 50  # sufficient for the iterative phase
     x = mp.mpf(config.initial_value)
-    base = mp.mpf(config.exponent)
 
     for _ in range(config.iterations):
-        cos_x = mp.cos(x)
-        x = mp.power(x, mp.power(base, cos_x))
+        x = mp.power(x, mp.power(config.exponent, mp.cos(x)))
 
+    # After the loop the MATLAB code multiplies by two, raises the precision, and
+    # displays the value with ``vpa``. ``mp.nstr`` lets us emit the same number of
+    # digits.
+    mp.mp.dps = config.precision_digits + 10  # guard digits for rounding
     result = mp.nstr(2 * x, n=config.precision_digits, strip_zeros=False)
 
     config.output_path.write_text(result, encoding="utf-8")
