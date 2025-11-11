@@ -21,3 +21,14 @@ Reiterating this equation `Max_Iter` times will give an approximation of ![pi/2]
 This program will store the value of your ![pi](http://mathurl.com/6cu2u8.png) approximation in a .txt file called `pi.txt`. To change the precision of the value stored, you can change the variable `Precision` in the PiApprox.m.
 
 Try playing around with the variables `x` and `Exponent` to see which values arrive to the approximation quicker.
+
+## Python port performance
+
+The Python script mirrors the MATLAB loop but relies on pure-Python arbitrary
+precision arithmetic by default. That makes the million-digit run
+significantly slower than MATLAB's symbolic toolbox, which calls into the
+compiled GMP/MPFR libraries. Installing [`gmpy2`](https://pypi.org/project/gmpy2/)
+lets `mpmath` switch to those libraries and the script automatically uses that
+faster backend when it is present. If even that is not enough, the remaining
+option is to implement the loop in C or C++ directly on top of GMP/MPFR so the
+entire computation stays in compiled code.
